@@ -1,0 +1,19 @@
+2015_2021: csv file containing all the happiness level data from 2015 to 2021
+
+List of Columns: 
+	country - name of country (str, 169 unique values)
+	region - region of world country is found in (str, 12 unique values)
+	year - year (num)
+	score - the overall happiness score (num, highest level is 10)
+	logged gdp per capita (num)
+	social support (num)
+	healthy life expectancy (num)
+	freedom to make life choices (num)
+	generosity (num)
+	perceptions of corruption (num)
+	explained by: log gdp per capita (num)
+	explained by: social support (num)
+	explained by: healthy life expectancy (num)
+	explained by: freedom to make life choices (num)
+	explained by: generosity (num)
+	explained by: perceptions of corruption (num)
