@@ -5,15 +5,20 @@ List of Columns:
 	region - region of world country is found in (str, 12 unique values)
 	year - year (num)
 	score - the overall happiness score (num, highest level is 10)
-	logged gdp per capita (num)
-	social support (num)
-	healthy life expectancy (num)
-	freedom to make life choices (num)
-	generosity (num)
-	perceptions of corruption (num)
-	explained by: log gdp per capita (num)
-	explained by: social support (num)
-	explained by: healthy life expectancy (num)
-	explained by: freedom to make life choices (num)
-	explained by: generosity (num)
-	explained by: perceptions of corruption (num)
+	logged_gdp_per_capita (num)	
+	social_support (num)	
+	healthy_life_expectancy (num)
+	freedom_to_make_life_choices (num)
+	generosity (num)	
+	perceptions_of_corruption (num)	
+	eb_log_gdp_per_capita (num)	
+	eb_social_support (num)	
+	eb_healthy_life_expectancy (num)	
+	eb_freedom_to_make_life_choices (num)	
+	eb_generosity (num)	
+	eb_perceptions_of_corruption (num)
+
+
+
+NOTE: "eb" in the csv column titles is the abbreviation of "explained by". 
+	For example, "eb_log_gdp_per_capita" means "explained by log gdp per capita"
