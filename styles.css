@@ -18,3 +18,16 @@ body {
 .sphere {
   fill: rgb(150, 209, 243);
 }
+
+.text-tooltip {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  padding: 3px;
+  border: 1px solid black;
+}
+
+.text:hover .text-tooltip {
+  display: block;
+}

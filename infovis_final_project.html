@@ -116,7 +116,7 @@
                                 d={path(feature)} 
                                 style ={{fill:myColor(country[0].score)}}
                                 strokeWidth={ 1.5 }
-                                stroke="#FFFFFF" 
+                                stroke={setStrokeColor(selectedCountry, feature.properties.name)} 
                                 onMouseOver={ () => handleMouseOver(feature.properties.name + ( country[0].score ))} 
                                 onMouseEnter={(event)=> {
                                    setSelectedCountry(feature.properties.name);
@@ -132,7 +132,7 @@
                                 d={path(feature)} 
                                 style ={{fill:"grey"}}
                                 strokeWidth={ 1.5 }
-                                stroke="#FFFFFF" 
+                                stroke={setStrokeColor(selectedCountry, feature.properties.name)} 
                                 onMouseOver={ () => handleMouseOver(feature.properties.name + ' unknown')}
                                 onMouseEnter={(event)=> {
                                     setSelectedCountry(feature.properties.name);
