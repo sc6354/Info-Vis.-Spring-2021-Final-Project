@@ -217,7 +217,57 @@
 
 
     //////////////////////////////////////////////////////////////////////////////////////
-    // Chart 3: Top 20 Happiest Countries in Year ___ (Stacked Bar Chart)
+    // Chart 3: Healthy life expectancy plot
+    function YAxisLife(props) {
+        const { yScale, height} = props;
+        return <g>
+            {<line y2={height} stroke='black' strokeWidth='1.5px'/>}
+            {yScale.ticks(6).map(tickValue => 
+                <g key={tickValue} transform={`translate(-10, ${yScale(tickValue)})`}>
+                    <line x2={10} stroke='black' />
+                    <text style={{ textAnchor:'end', fontSize:'14px' }} transform={`translate(-2, 4)`} >
+                        {tickValue}
+                    </text>
+                </g>
+        )} </g>
+    }
+
+    function HealthPlot(props) {
+        const { x, y, data, ave, height, width, xScale, yScale, selectedCountry, setSelectedCountry } = props;
+        const line = d3.area()
+            .x((d) => xScale(d.year))
+            .y((d) => yScale(d.healthy_life_expectancy))
+            (data);
+
+        const aveLine = d3.area()
+            .x((d) => xScale(d.key))
+            .y((d) => yScale(d.value))
+            (ave);
+        
+        return <g transform={`translate(1020,320)`}>
+            <text style={{ textAnchor:'start', fontSize:'16px'}} transform={`translate(${width/15}, -30)`}>
+                    {"Healthy Life Expectancy " }
+            </text>
+            <text style={{ textAnchor:'start', fontSize:'16px'}} transform={`translate(${width/15}, -10)`}>
+                    {selectedCountry}
+            </text>
+            <path d={line} stroke={'black'} strokeWidth={'1.5px'} />
+            <text style={{ fill:'red', fontSize:'14px'}} transform={`translate(${width/2}, 85)`}>
+                    {'Ave. Life Expectancy'}
+            </text>
+            <path d={aveLine} stroke={'red'} strokeWidth={'2px'} />
+            <YAxisLife yScale={yScale} height={height}/>
+            <XAxis xScale={xScale} height={height} width={width} />
+        </g>
+    }
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Chart 4: Top 20 Happiest Countries in Year ___ (Stacked Bar Chart)
     function StackedBarChart(props) {}
 
 
@@ -226,7 +276,7 @@
 
 
     //////////////////////////////////////////////////////////////////////////////////////
-    // Chart 4: Select 2 Happiness Attributes (Scatter Chart)
+    // Chart 5: Select 2 Happiness Attributes (Scatter Chart)
     function ScatterChart(props) {}
 
 
@@ -250,16 +300,19 @@
         const data = dataAll.filter( d => {
             return d.year === YEAR[year];
         });
-
-        const ave= d3.rollup(dataAll, v => d3.mean(v, d => d.score), d => d.year)
-        const aveScoreByYear = Array.from(ave, ([key, value]) => ({key, value}))
+        
         const countryData = dataAll.filter( d=> {
             return d.country == selectedCountry;
         }); 
     
-        //console.log(countryData);
-        //console.log(aveScoreByYear);
+        const ave = d3.rollup(dataAll, v => d3.mean(v, d => d.score), d => d.year)
+        const aveScoreByYear = Array.from(ave, ([key, value]) => ({key, value}))
 
+        const aveHealth = d3.rollup(dataAll, v => d3.mean(v, d => d.healthy_life_expectancy), d => d.year)
+        const aveHealthByYear = Array.from(aveHealth, ([key, value]) => ({key, value}))
+        console.log(aveHealthByYear);
+
+        
         // axes for CountryData Time plot
         const xScaleTime = d3.scaleBand()
             .domain(countryData.map(d => d.year))
@@ -269,7 +322,12 @@
             .domain([0, 8.5])
             .range([innerHeight/8, 0])
             .nice();
-        yScaleTime.type="YaxisTime";
+        
+        // y axis for heatlhy life expectancy
+        const yScaleLife= d3.scaleLinear()
+            .domain([0, 90])
+            .range([innerHeight/8, 0])
+            .nice();
 
         const changeHandler = (event) => {
                     setYear(event.target.value);
@@ -297,6 +355,16 @@
                                            width={innerWidth/4}
                                            xScale = {xScaleTime}
                                            yScale = {yScaleTime}
+                                           selectedCountry={selectedCountry} 
+                                           setSelectedCountry={setSelectedCountry}/>
+                    <HealthPlot x={margin.left+innerWidth/2} 
+                                           y={margin.top} 
+                                           data={countryData} 
+                                           ave={aveHealthByYear}
+                                           height={innerHeight/8} 
+                                           width={innerWidth/4}
+                                           xScale = {xScaleTime}
+                                           yScale = {yScaleLife}
                                            selectedCountry={selectedCountry} 
                                            setSelectedCountry={setSelectedCountry}/>
                 </svg>
