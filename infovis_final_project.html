@@ -93,7 +93,9 @@
         const projection = d3.geoPatterson().scale(148).precision(100);
         const path = d3.geoPath(projection);
         var myColor = d3.scaleSequential().domain([1,10]).interpolator(d3.interpolatePuRd);
-        
+        var legend = d3.mean(data, d => d.score);
+        console.log(legend);
+      
         const handleMouseOver = feature => {
             console.log("Clicked on country: ", feature)
         }
@@ -106,7 +108,7 @@
             <path className={'sphere'} d={path({type: 'Sphere'})} />
             {map.features.map( feature =>  { 
                 const country = data.filter( d => d.country == feature.properties.name);
-                                    //.filter( d => d.year == '2015');
+                
                if (country[0]){
                    //console.log(country[0])
                    return <path key={feature.properties.name+"boundary"} 
@@ -138,11 +140,20 @@
                                 onMouseOut={()=> {
                                     setSelectedCountry("United States of America");
                                 }}/>}
-                    }
-                
+                    } 
             )}
+
+         
+            <g transform = {`translate(1000, 1000)`}>
+           
+            <rect key={"unknow_rect"} style={{fill: "grey"}} />
+            <text key={"unknow_legendText"} >
+                    {"Unknown"}
+            </text>
+        </g>
         </g>
     }
+
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 2: Happiness over time in country ___ (Time Plot)
@@ -176,22 +187,29 @@
     }
 
     function TimePlot(props) {
-        const { x, y, data, height, width, xScale, yScale, selectedCountry, setSelectedCountry } = props;
+        const { x, y, data, ave, height, width, xScale, yScale, selectedCountry, setSelectedCountry } = props;
         const line = d3.area()
             .x((d) => xScale(d.year))
             .y((d) => yScale(d.score))
             (data);
-        //console.log(data);
-
+        
+        const aveLine = d3.area()
+            .x((d) => xScale(d.key))
+            .y((d) => yScale(d.value))
+            (ave);
+            
         return <g transform={`translate(1020,45)`}>
             <text style={{ textAnchor:'start', fontSize:'16px'}} transform={`translate(${width/15}, -30)`}>
                     {"Happiness Score Over Time for " }
-                    
             </text>
             <text style={{ textAnchor:'start', fontSize:'16px'}} transform={`translate(${width/15}, -10)`}>
                     {selectedCountry}
             </text>
             <path d={line} stroke={'black'} strokeWidth={'1.5px'} />
+            <text style={{ fill:'red', fontSize:'14px'}} transform={`translate(${width/2}, 85)`}>
+                    {'Ave. Happiness Score'}
+            </text>
+            <path d={aveLine} stroke={'red'} strokeWidth={'2px'} />
             <YAxis yScale={yScale} height={height}/>
             <XAxis xScale={xScale} height={height} width={width} />
         </g>
@@ -233,19 +251,22 @@
             return d.year === YEAR[year];
         });
 
+        const ave= d3.rollup(dataAll, v => d3.mean(v, d => d.score), d => d.year)
+        const aveScoreByYear = Array.from(ave, ([key, value]) => ({key, value}))
         const countryData = dataAll.filter( d=> {
             return d.country == selectedCountry;
         }); 
-        console.log(countryData);
-        //console.log(map);
+    
+        //console.log(countryData);
+        //console.log(aveScoreByYear);
 
-        // axes for CountryData
+        // axes for CountryData Time plot
         const xScaleTime = d3.scaleBand()
             .domain(countryData.map(d => d.year))
             .range([0, innerWidth/4]);
 
         const yScaleTime = d3.scaleLinear()
-            .domain([0, d3.max(countryData, d => d.score)])
+            .domain([0, 8.5])
             .range([innerHeight/8, 0])
             .nice();
         yScaleTime.type="YaxisTime";
@@ -271,6 +292,7 @@
                     <TimePlot x={margin.left+innerWidth/2} 
                                            y={margin.top} 
                                            data={countryData} 
+                                           ave={aveScoreByYear}
                                            height={innerHeight/8} 
                                            width={innerWidth/4}
                                            xScale = {xScaleTime}
