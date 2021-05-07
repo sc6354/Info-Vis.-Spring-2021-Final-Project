@@ -15,11 +15,35 @@
     <link rel="stylesheet" href="styles.css" > 
 </head>
 <body>
+    <h1>Has the World Become Happier?</h1>
+    <p>Happiness is an essential part of well being and although it can be hard to measure, many economists argue that it is a 
+        better indicator of human welfare than income, poverty, education, and other socio-economic indicators. The World 
+        Happiness Report (WHR) collected and surveyed random samples of people in every country to arrive at a happiness score 
+        for that country. In doing so, they considered how factors such as health, income, perception of government corruption, 
+        etc. impacts happiness. We would like to examine these factors and their effects with these visualizations.</p>
+    <br>
+    <h3>What tasks does this visualization aim to solve?</h3>
+    <p>This visualization aims to solve several tasks. First, this visualization allows the viewer to not only see the happiness scores 
+        and rankings for a specific country, but also of the other surrounding countries. This lets the viewer compare and contrast 
+        between different areas. Additionally, this visualization lets the viewer witness the changes in happiness over the past few years (2015 - 2021),
+        which can help in better understanding what the country has been through recently and predict its future trajectory. 
+        <br><br>
+        On top of these features, the visualization also breaks down the measurements of wellbeing that have been used to assess 
+        the progress of the top 20 nations in a year that the viewer can choose. There is also an overview of the correlation between 
+        two attributes one can select from a checklist, such as the change in happiness and the change in healthy life expectancy.
+        <br><br>
+        By utilizing these visualizations, one can reach a deeper understanding of the history of happiness for one country in particular,
+         and compare it to other nations as well. On top of this, one can also delve into various attributes and their correlation 
+         with happiness in various parts of the world. This visualization can greatly help someone such as a policymaker establish the 
+         direction for policies to help their country improve.
+        
+    
+    </p>
     <div id="root"></div>
     <script type="text/babel">
 
     const csvUrl = 'https://raw.githubusercontent.com/sc6354/Info-Vis.-Spring-2021-Final-Project/main/data%20files/2015_2021.csv'; // link to all years data in github
-    const mapUrl = ""; // use this for the world map
+    const mapUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json"; // use this for the world map, this is the link from NYU Classes, Week 14 resources
 
 
     // set up data
@@ -28,6 +52,7 @@
         React.useEffect(() => {
             d3.csv(csvPath).then(data => {
                 data.forEach(d => {
+                    d.year = +d.year;
                     d.score = +d.score;
                     d.logged_gdp_per_capita = +d.logged_gdp_per_capita;
                     d.social_support = +d.social_support;
@@ -49,27 +74,27 @@
     }
 
     // literally copied and pasted this from assignment 4 in case you need it for the world map
-    function useMap(jsonPath) {
-        const [data, setData] = React.useState(null);
-        React.useEffect(() => {
-            d3.json(jsonPath).then(geoJsonData => {
-                setData(geoJsonData);
-            })
-        }, []);
-        return data;
-    }
+    //function useMap(jsonPath) {
+    //    const [data, setData] = React.useState(null);
+     //   React.useEffect(() => {
+     //       d3.json(jsonPath).then(geoJsonData => {
+    //            setData(geoJsonData);
+     //       })
+     //   }, []);
+     //   return data;
+    //}
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 1: Global Happiness Score in Year ___ (World Plot)
-    function WorldPlot(props) {}
+    //function WorldPlot(props) {}
     
 
 
-    function Tooltip(props) {}
+    //function Tooltip(props) {}
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 2: Happiness over time in country ___ (Time Plot)
-    function TimePlot(props) {}
+    //function TimePlot(props) {}
 
     
     
@@ -77,7 +102,7 @@
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 3: Top 20 Happiest Countries in Year ___ (Stacked Bar Chart)
-    function StackedBarChart(props) {}
+    //function StackedBarChart(props) {}
 
 
 
@@ -86,7 +111,10 @@
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 4: Select 2 Happiness Attributes (Scatter Chart)
-    function ScatterChart(props) {}
+    function ScatterChart(props) {
+
+
+    }
 
 
 
@@ -94,20 +122,39 @@
 
     const worldHappy = () => {
 
+        const [selectedCountry, setSelectedCountry] = React.useState('United States'); // default country is US
+        
         const dataAll = useData(csvUrl);
         const map = useMap(mapUrl);
+
 
         const WIDTH = 1200;
         const HEIGHT = 800;
         const margin = { top: 20, right: 40, bottom: 160, left: 40, gap:40 };
         const innerWidth = WIDTH - margin.left - margin.right - margin.gap;
         const innerHeight = HEIGHT - margin.top - margin.bottom - margin.gap;
-        const data = dataAll.filter( d => {
-            return d.month === MONTH[month];
-        });
 
         
+        const countryYearData = dataAll.filter( d=> {
+            return d.country == selectedCountry;
+        });
+
+
         return <div>
+
+            
+                <svg width={WIDTH} height={HEIGHT}>
+                    <g>
+                        <SymbolMap x={margin.left} y={margin.top} height={innerHeight+margin.gap} 
+                        width={innerWidth/2} data={data} map={map} selectedStation={selectedStation} 
+                        setSelectedStation={setSelectedStation}/>
+                        <SymmetricBarChart x={margin.left+innerWidth/2} y={margin.top} data={data} height={innerHeight/2} width={innerWidth/2}
+                        selectedStation={selectedStation} setSelectedStation={setSelectedStation}/>
+                    </g>
+                    <Tooltip d={selectedPoint} stationYearData={stationYearData} left={innerWidth/2+margin.gap} top={margin.top+80+innerHeight/2} 
+                height={innerHeight/2} width={innerWidth/2}/>
+                </svg>
+
             <div style={{position: "absolute", textAlign: "left", width: "240px",left:"40px", top:"40px"}}>
                 <h3>world happiness</h3>
                 <p>something</p>
