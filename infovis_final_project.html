@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Has the World Become Happier?</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3-path.v2.min.js"></script>
+    <script src="https://d3js.org/d3-shape.v2.min.js"></script>
+    <script src="https://d3js.org/topojson.v1.min.js"></script>
+    <script src="https://d3js.org/d3-array.v2.min.js"></script>
+    <script src="https://d3js.org/d3-geo.v2.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v3.min.js"></script>
+    <script src="https://unpkg.com/react/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone/babel.js"></script>
+    <link rel="stylesheet" href="styles.css" > 
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+    const csvUrl = 'https://raw.githubusercontent.com/sc6354/Info-Vis.-Spring-2021-Final-Project/main/data%20files/2015_2021.csv'; // link to all years data in github
+    const mapUrl = ""; // use this for the world map
+
+
+    // set up data
+    function useData(csvPath){
+        const [dataAll, setData] = React.useState(null);
+        React.useEffect(() => {
+            d3.csv(csvPath).then(data => {
+                data.forEach(d => {
+                    d.score = +d.score;
+                    d.logged_gdp_per_capita = +d.logged_gdp_per_capita;
+                    d.social_support = +d.social_support;
+                    d.healthy_life_expectancy = +d.healthy_life_expectancy;
+                    d.freedom_to_make_life_choices = +d.freedom_to_make_life_choices;
+                    d.generosity = +d.generosity;
+                    d.perceptions_of_corruption = +d.perceptions_of_corruption;
+                    d.eb_log_gdp_per_capita = +d.eb_log_gdp_per_capita;
+                    d.eb_social_support = +d.eb_social_support;
+                    d.eb_healthy_life_expectancy = +d.eb_healthy_life_expectancy;
+                    d.eb_freedom_to_make_life_choices = +d.eb_freedom_to_make_life_choices;
+                    d.eb_generosity = +d.eb_generosity;
+                    d.eb_perceptions_of_corruption = +d.eb_perceptions_of_corruption;
+                });
+                setData(data);
+            });
+        }, []);
+        return dataAll;
+    }
+
+    // literally copied and pasted this from assignment 4 in case you need it for the world map
+    function useMap(jsonPath) {
+        const [data, setData] = React.useState(null);
+        React.useEffect(() => {
+            d3.json(jsonPath).then(geoJsonData => {
+                setData(geoJsonData);
+            })
+        }, []);
+        return data;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Chart 1: Global Happiness Score in Year ___ (World Plot)
+    function WorldPlot(props) {}
+    
+
+
+    function Tooltip(props) {}
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Chart 2: Happiness over time in country ___ (Time Plot)
+    function TimePlot(props) {}
+
+    
+    
+
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Chart 3: Top 20 Happiest Countries in Year ___ (Stacked Bar Chart)
+    function StackedBarChart(props) {}
+
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Chart 4: Select 2 Happiness Attributes (Scatter Chart)
+    function ScatterChart(props) {}
+
+
+
+
+
+    const worldHappy = () => {
+
+        const dataAll = useData(csvUrl);
+        const map = useMap(mapUrl);
+
+        const WIDTH = 1200;
+        const HEIGHT = 800;
+        const margin = { top: 20, right: 40, bottom: 160, left: 40, gap:40 };
+        const innerWidth = WIDTH - margin.left - margin.right - margin.gap;
+        const innerHeight = HEIGHT - margin.top - margin.bottom - margin.gap;
+        const data = dataAll.filter( d => {
+            return d.month === MONTH[month];
+        });
+
+        
+        return <div>
+            <div style={{position: "absolute", textAlign: "left", width: "240px",left:"40px", top:"40px"}}>
+                <h3>world happiness</h3>
+                <p>something</p>
+            </div>
+            
+        </div>
+    }
+    ReactDOM.render( <worldHappy />, document.getElementById('root'));
+    </script>
+    </body>
+    </html>
