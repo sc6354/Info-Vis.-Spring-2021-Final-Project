@@ -89,8 +89,7 @@
     }
 
     function TheMap(props) {
-        const [selectedCountry, setSelectedCountry] = React.useState(null);
-        const { data, map } = props;
+        const { data, map, selectedCountry, setSelectedCountry } = props;
         const projection = d3.geoPatterson().scale(148).precision(100);
         const path = d3.geoPath(projection);
         var myColor = d3.scaleSequential().domain([1,10]).interpolator(d3.interpolatePuRd);
@@ -98,6 +97,10 @@
         const handleMouseOver = feature => {
             console.log("Clicked on country: ", feature)
         }
+
+        const setStrokeColor = (selectedCountry, country) => {
+                    return selectedCountry&&country===selectedCountry ? "black" : "#FFFFFF";
+                }
 
         return <g>
             <path className={'sphere'} d={path({type: 'Sphere'})} />
@@ -112,31 +115,87 @@
                                 style ={{fill:myColor(country[0].score)}}
                                 strokeWidth={ 1.5 }
                                 stroke="#FFFFFF" 
-                                onMouseOver={ () => handleMouseOver(feature.properties.name + ( country[0].score ))} />}
-                     
+                                onMouseOver={ () => handleMouseOver(feature.properties.name + ( country[0].score ))} 
+                                onMouseEnter={(event)=> {
+                                   setSelectedCountry(feature.properties.name);
+                                }}
+                                onMouseOut={()=> {
+                                    setSelectedCountry("United States of America");
+                                }}/>}
                 else {
                     //console.log(feature.properties.name)
                     //countries with no data for 
                     return <path key={feature.properties.name+"boundary"} 
-                                      d={path(feature)} 
-                                      style ={{fill:"grey"}}
-                                      strokeWidth={ 1.5 }
-                                      stroke="#FFFFFF" 
-                                      onMouseOver={ () => handleMouseOver(feature.properties.name + ' unknown')}/>}
-            }
+                                className={"boundary"} 
+                                d={path(feature)} 
+                                style ={{fill:"grey"}}
+                                strokeWidth={ 1.5 }
+                                stroke="#FFFFFF" 
+                                onMouseOver={ () => handleMouseOver(feature.properties.name + ' unknown')}
+                                onMouseEnter={(event)=> {
+                                    setSelectedCountry(feature.properties.name);
+                                }}
+                                onMouseOut={()=> {
+                                    setSelectedCountry("United States of America");
+                                }}/>}
+                    }
                 
             )}
         </g>
     }
 
-    function Tooltip(props) {}
-
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 2: Happiness over time in country ___ (Time Plot)
-    function TimePlot(props) {}
+    function XAxis(props) {
+        const { xScale, height, width} = props;
+        return <g>
+            {<line x1={0} y1={height} x2={width-30} y2={height} stroke='black' strokeWidth='1.5px'/>}
+            {xScale.domain().map(tickValue =>
+                <g key={tickValue} transform={`translate(${xScale(tickValue)}, 182)`}>
+                    <line y1={-height/18} stroke='black'/>
+                    <text style={{ textAnchor:'start', fontSize:'14px' }} transform={`translate(-14, 13)`}>
+                        {tickValue}
+                    </text>
+                </g>
+            )}
+        </g>
+    }
 
-    
-    
+    function YAxis(props) {
+        const { yScale, height} = props;
+        return <g>
+            {<line y2={height} stroke='black' strokeWidth='1.5px'/>}
+            {yScale.ticks(6).map(tickValue => 
+                <g key={tickValue} transform={`translate(-10, ${yScale(tickValue)})`}>
+                    <line x2={10} stroke='black' />
+                    <text style={{ textAnchor:'end', fontSize:'14px' }} transform={`translate(-2, 4)`} >
+                        {tickValue}
+                    </text>
+                </g>
+        )} </g>
+    }
+
+    function TimePlot(props) {
+        const { x, y, data, height, width, xScale, yScale, selectedCountry, setSelectedCountry } = props;
+        const line = d3.area()
+            .x((d) => xScale(d.year))
+            .y((d) => yScale(d.score))
+            (data);
+        //console.log(data);
+
+        return <g transform={`translate(1020,45)`}>
+            <text style={{ textAnchor:'start', fontSize:'16px'}} transform={`translate(${width/15}, -30)`}>
+                    {"Happiness Score Over Time for " }
+                    
+            </text>
+            <text style={{ textAnchor:'start', fontSize:'16px'}} transform={`translate(${width/15}, -10)`}>
+                    {selectedCountry}
+            </text>
+            <path d={line} stroke={'black'} />
+            <YAxis yScale={yScale} height={height}/>
+            <XAxis xScale={xScale} height={height} width={width} />
+        </g>
+    }
 
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -157,7 +216,7 @@
 
 
     function WorldHappy(props) {
-        const [selectedCountry, setSelectedCountry] = React.useState('United States'); 
+        const [selectedCountry, setSelectedCountry] = React.useState('United States of America'); 
         const [year, setYear] = React.useState('6');
         const dataAll = useData(csvUrl);
         const map = useMap(mapUrl);
@@ -165,25 +224,40 @@
         if (!map) {
                 return <pre>Loading...</pre>;
             };
-        const WIDTH = 1200;
-        const HEIGHT = 800;
+        const WIDTH = 1350;
+        const HEIGHT = 1600;
         const margin = { top: 20, right: 40, bottom: 160, left: 40, gap:40 };
         const innerWidth = WIDTH - margin.left - margin.right - margin.gap;
         const innerHeight = HEIGHT - margin.top - margin.bottom - margin.gap;
         const data = dataAll.filter( d => {
             return d.year === YEAR[year];
         });
-        console.log(YEAR[year]);
-        console.log(map);
+
+        const countryData = dataAll.filter( d=> {
+            return d.country == selectedCountry;
+        }); 
+        console.log(countryData);
+        //console.log(map);
+
+        // axes for CountryData
+        const xScaleTime = d3.scaleBand()
+            .domain(countryData.map(d => d.year))
+            .range([0, innerWidth/4]);
+
+        const yScaleTime = d3.scaleLinear()
+            .domain([0, d3.max(countryData, d => d.score)])
+            .range([innerHeight/8, 0])
+            .nice();
+        yScaleTime.type="YaxisTime";
 
         const changeHandler = (event) => {
                     setYear(event.target.value);
                 }
-
+        
         return <div>
             <div>
             <h3>World Happiness Map</h3>
-                <p>Each country is surveyed on a number of factors and assigned a happiness score. The higher the score, the "happier" citizens of that country are.</p>
+                <p>Each country is surveyed on a number of factors and assigned a happiness score. The higher the score, the "happier citizens of that country are.</p>
             </div>
             <div>
                 <input key="slider" type='range' min='0' max='6' value={year} step='1' onChange={changeHandler}/>
@@ -191,7 +265,18 @@
             </div>
             <div style={{position: "relative", textAlign: "left", width: "240px",left:"40px", top:"40px"}}>
                 <svg width={WIDTH} height={HEIGHT}>
-                    <TheMap data={data} map={map} />
+                    <TheMap data={data} map={map} selectedCountry={selectedCountry} 
+                        setSelectedCountry={setSelectedCountry}/>
+
+                    <TimePlot x={margin.left+innerWidth/2} 
+                                           y={margin.top} 
+                                           data={countryData} 
+                                           height={innerHeight/8} 
+                                           width={innerWidth/4}
+                                           xScale = {xScaleTime}
+                                           yScale = {yScaleTime}
+                                           selectedCountry={selectedCountry} 
+                                           setSelectedCountry={setSelectedCountry}/>
                 </svg>
             </div>
             
