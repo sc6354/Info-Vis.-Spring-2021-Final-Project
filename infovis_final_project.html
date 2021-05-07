@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Has the World Become Happier?</title>
+    <title>world map using react</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://d3js.org/d3-path.v2.min.js"></script>
     <script src="https://d3js.org/d3-shape.v2.min.js"></script>
@@ -9,6 +9,9 @@
     <script src="https://d3js.org/d3-array.v2.min.js"></script>
     <script src="https://d3js.org/d3-geo.v2.min.js"></script>
     <script src="https://d3js.org/d3-geo-projection.v3.min.js"></script>
+    <script src="https://d3js.org/d3-color.v2.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v2.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v2.min.js"></script>
     <script src="https://unpkg.com/react/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone/babel.js"></script>
@@ -17,10 +20,11 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-
+    const WIDTH = 1000;
+    const HEIGHT = 600;
+    const margin = { top: 20, right: 40, bottom: 20, left: 40 };
     const csvUrl = 'https://raw.githubusercontent.com/sc6354/Info-Vis.-Spring-2021-Final-Project/main/data%20files/2015_2021.csv'; // link to all years data in github
-    const mapUrl = ""; // use this for the world map
-
+    const mapUrl = "https://unpkg.com/world-atlas@2.0.2/countries-110m.json";
 
     // set up data
     function useData(csvPath){
@@ -48,22 +52,57 @@
         return dataAll;
     }
 
-    // literally copied and pasted this from assignment 4 in case you need it for the world map
     function useMap(jsonPath) {
         const [data, setData] = React.useState(null);
         React.useEffect(() => {
-            d3.json(jsonPath).then(geoJsonData => {
-                setData(geoJsonData);
-            })
+            d3.json(jsonPath).then(topoJsonData => {
+                setData(topojson.feature(topoJsonData, topoJsonData.objects.countries))});
         }, []);
         return data;
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Chart 1: Global Happiness Score in Year ___ (World Plot)
-    function WorldPlot(props) {}
-    
+    function TheMap(props) {
+        const [year, setYear] = React.useState("score");
+        const [selectedCountry, setSelectedCountry] = React.useState(null);
+        const { data, map } = props;
+        const projection = d3.geoPatterson().scale(148).precision(100);
+        const path = d3.geoPath(projection);
+        var myColor = d3.scaleSequential().domain([1,10]).interpolator(d3.interpolatePuRd);
+        
+        const handleMouseOver = feature => {
+            console.log("Clicked on country: ", feature)
+        }
 
+        return <g>
+            <path className={'sphere'} d={path({type: 'Sphere'})} />
+            {map.features.map( feature =>  { 
+                const country = data.filter( d => d.country == feature.properties.name)
+                                    .filter( d => d.year == '2015');
+               if (country[0]){
+                   //console.log(country[0])
+                   return <path key={feature.properties.name+"boundary"} 
+                                className={"boundary"} 
+                                d={path(feature)} 
+                                style ={{fill:myColor(country[0].score)}}
+                                strokeWidth={ 1.5 }
+                                stroke="#FFFFFF" 
+                                onMouseOver={ () => handleMouseOver(feature.properties.name + ( country[0].score ))} />}
+                     
+                else {
+                    //console.log(feature.properties.name)
+                    //countries with no data for 
+                    return <path key={feature.properties.name+"boundary"} 
+                                      d={path(feature)} 
+                                      style ={{fill:"grey"}}
+                                      strokeWidth={ 1.5 }
+                                      stroke="#FFFFFF" 
+                                      onMouseOver={ () => handleMouseOver(feature.properties.name + ' unknown')}/>}
+            }
+                //<p ref={ref => this.fooRef = ref} data-tip='tooltip'></p>
+               
+            )}
+        </g>
+    }
 
     function Tooltip(props) {}
 
@@ -92,8 +131,7 @@
 
 
 
-    const worldHappy = () => {
-
+    function WorldHappy(props) {
         const dataAll = useData(csvUrl);
         const map = useMap(mapUrl);
 
@@ -102,20 +140,25 @@
         const margin = { top: 20, right: 40, bottom: 160, left: 40, gap:40 };
         const innerWidth = WIDTH - margin.left - margin.right - margin.gap;
         const innerHeight = HEIGHT - margin.top - margin.bottom - margin.gap;
-        const data = dataAll.filter( d => {
-            return d.month === MONTH[month];
-        });
-
         
+        if (!map) {
+                return <pre>Loading...</pre>;
+            };
+        console.log(dataAll);
+        console.log(map);
+
         return <div>
             <div style={{position: "absolute", textAlign: "left", width: "240px",left:"40px", top:"40px"}}>
                 <h3>world happiness</h3>
                 <p>something</p>
+                <svg width={WIDTH} height={HEIGHT}>
+                    <TheMap data={dataAll} map={map} />
+                </svg>
             </div>
             
         </div>
     }
-    ReactDOM.render( <worldHappy />, document.getElementById('root'));
+    ReactDOM.render( <WorldHappy />, document.getElementById('root'));
     </script>
     </body>
     </html>
