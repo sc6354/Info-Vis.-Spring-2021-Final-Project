@@ -42,6 +42,9 @@
         
     
     </p>
+
+
+
     <div id="root"></div>
     <script type="text/babel">
     const WIDTH = 1000;
@@ -56,7 +59,6 @@
         React.useEffect(() => {
             d3.csv(csvPath).then(data => {
                 data.forEach(d => {
-                    d.year = +d.year;
                     d.score = +d.score;
                     d.logged_gdp_per_capita = +d.logged_gdp_per_capita;
                     d.social_support = +d.social_support;
@@ -87,7 +89,6 @@
     }
 
     function TheMap(props) {
-        const [year, setYear] = React.useState("score");
         const [selectedCountry, setSelectedCountry] = React.useState(null);
         const { data, map } = props;
         const projection = d3.geoPatterson().scale(148).precision(100);
@@ -101,8 +102,8 @@
         return <g>
             <path className={'sphere'} d={path({type: 'Sphere'})} />
             {map.features.map( feature =>  { 
-                const country = data.filter( d => d.country == feature.properties.name)
-                                    .filter( d => d.year == '2015');
+                const country = data.filter( d => d.country == feature.properties.name);
+                                    //.filter( d => d.year == '2015');
                if (country[0]){
                    //console.log(country[0])
                    return <path key={feature.properties.name+"boundary"} 
@@ -123,17 +124,16 @@
                                       stroke="#FFFFFF" 
                                       onMouseOver={ () => handleMouseOver(feature.properties.name + ' unknown')}/>}
             }
-                //<p ref={ref => this.fooRef = ref} data-tip='tooltip'></p>
-               
+                
             )}
         </g>
     }
 
-    //function Tooltip(props) {}
+    function Tooltip(props) {}
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 2: Happiness over time in country ___ (Time Plot)
-    //function TimePlot(props) {}
+    function TimePlot(props) {}
 
     
     
@@ -141,7 +141,7 @@
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 3: Top 20 Happiest Countries in Year ___ (Stacked Bar Chart)
-    //function StackedBarChart(props) {}
+    function StackedBarChart(props) {}
 
 
 
@@ -150,49 +150,54 @@
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 4: Select 2 Happiness Attributes (Scatter Chart)
-    function ScatterChart(props) {
-
-
-    }
+    function ScatterChart(props) {}
 
 
 
 
 
     function WorldHappy(props) {
-        const [selectedCountry, setSelectedCountry] = React.useState('United States'); // default country is US
-        
+        const [selectedCountry, setSelectedCountry] = React.useState('United States'); 
+        const [year, setYear] = React.useState('6');
         const dataAll = useData(csvUrl);
         const map = useMap(mapUrl);
-
-
+        const YEAR= ['2015', '2016', '2017', '2018', '2019', '2020', '2021'];
+        if (!map) {
+                return <pre>Loading...</pre>;
+            };
         const WIDTH = 1200;
         const HEIGHT = 800;
         const margin = { top: 20, right: 40, bottom: 160, left: 40, gap:40 };
         const innerWidth = WIDTH - margin.left - margin.right - margin.gap;
         const innerHeight = HEIGHT - margin.top - margin.bottom - margin.gap;
-
-        if (!map) {
-                return <pre>Loading...</pre>;
-            };
-        console.log(dataAll);
+        const data = dataAll.filter( d => {
+            return d.year === YEAR[year];
+        });
+        console.log(YEAR[year]);
         console.log(map);
 
+        const changeHandler = (event) => {
+                    setYear(event.target.value);
+                }
 
         return <div>
+            <div>
+            <h3>world happiness</h3>
+                <p>something</p>
+            </div>
+            <div>
+                <input key="slider" type='range' min='0' max='6' value={year} step='1' onChange={changeHandler}/>
+                <input key="monthText" type="text" value={YEAR[year]} readOnly/>
+            </div>
             <div style={{position: "relative", textAlign: "left", width: "240px",left:"40px", top:"40px"}}>
-                    <h3>World Happiness Map</h3>
-                    <p>something</p>
-                    <svg width={WIDTH} height={HEIGHT}>
-                        <TheMap data={dataAll} map={map} />
-                    </svg>
-                </div>
+                <svg width={WIDTH} height={HEIGHT}>
+                    <TheMap data={data} map={map} />
+                </svg>
             </div>
             
+        </div>
     }
     ReactDOM.render( <WorldHappy />, document.getElementById('root'));
     </script>
     </body>
     </html>
-
-       
