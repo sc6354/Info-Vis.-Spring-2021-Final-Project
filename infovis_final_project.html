@@ -79,8 +79,6 @@
         return dataAll;
     }
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Chart 1: World Happiness Map
     function useMap(jsonPath) {
         const [data, setData] = React.useState(null);
         React.useEffect(() => {
@@ -193,6 +191,7 @@
 
 
 
+
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 2: Happiness over time in country ___ (Time Plot)
     function XAxis(props) {
@@ -290,7 +289,7 @@
         
         return <g transform={`translate(1020,320)`}>
             <text style={{ textAnchor:'start', fontSize:'16px'}} transform={`translate(${width/15}, -30)`}>
-                    {"Healthy Life Expectancy for" }
+                    {"Healthy Life Expectancy " }
             </text>
             <text style={{ textAnchor:'start', fontSize:'16px'}} transform={`translate(${width/15}, -10)`}>
                     {selectedCountry}
@@ -312,10 +311,6 @@
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 4: Top 20 Happiest Countries in Year ___ (Stacked Bar Chart)
-    function xaxisbar(props){}
-
-    
-
     function StackedBarChart(props) {}
 
 
@@ -325,13 +320,6 @@
 
     //////////////////////////////////////////////////////////////////////////////////////
     // Chart 5: Select 2 Happiness Attributes (Scatter Chart)
-
-
-    
-
-
-
-
     function ScatterChart(props) {}
 
 
@@ -343,12 +331,14 @@
         const [year, setYear] = React.useState('6');
         const [tooltipX, setTooltipX] = React.useState(null);
         const [tooltipY, setTooltipY] = React.useState(null);
+
         const dataAll = useData(csvUrl);
         const map = useMap(mapUrl);
         const YEAR= ['2015', '2016', '2017', '2018', '2019', '2020', '2021'];
         if (!map) {
                 return <pre>Loading...</pre>;
             };
+
         const WIDTH = 1350;
         const HEIGHT = 1600;
         const margin = { top: 20, right: 40, bottom: 160, left: 40, gap:40 };
@@ -360,7 +350,10 @@
         
         const countryData = dataAll.filter( d=> {
             return d.country == selectedCountry;
-        }); 
+        });
+        const yearCountryData = countryData.filter( d => {
+            return d.year === YEAR[year];
+        });
 
         // calculate average happiness score by year 
         const ave = d3.rollup(dataAll, v => d3.mean(v, d => d.score), d => d.year)
@@ -369,8 +362,6 @@
         // calculate average life expectancy by year 
         const aveHealth = d3.rollup(dataAll, v => d3.mean(v, d => d.healthy_life_expectancy), d => d.year)
         const aveHealthByYear = Array.from(aveHealth, ([key, value]) => ({key, value}))
-        console.log(aveHealthByYear);
-
         
         // axes for CountryData Time plot
         const xScaleTime = d3.scaleBand()
@@ -388,29 +379,6 @@
             .range([innerHeight/8, 0])
             .nice();
 
-        // x axis for stacked bar chart
-        const xScaleBar = d3.scaleLinear()
-            .domain([0, 8.5])
-            .range([margin.left, innerWidth])
-
-        // y axis for stacked bar chart
-        const yScaleBar = d3.scaleBand()
-            .domain([0, 8.5])
-            .range([innerHeight/3, 0])
-            .padding(0.1)
-		    .paddingOuter(0.2)
-		    .paddingInner(0.2)
-            
-         // x axis for scatter plot   
-        const xScaleScatter = d3.scaleLinear()
-            .domain([0, 8.5])
-            .range([margin.left, innerWidth])
-            .nice();
-
-        // y axis for scatter plot
-        const yScaleScatter = d3.scaleLinear()
-            .range([innerHeight/3, 0]);
-        
         const changeHandler = (event) => {
                     setYear(event.target.value);
                 }
@@ -418,7 +386,7 @@
         return <div>
             <div>
             <h3>World Happiness Map</h3>
-                <p>Each country is surveyed on a number of factors and assigned a happiness score. The higher the score, the "happier" citizens of that country are.</p>
+                <p>Each country is surveyed on a number of factors and assigned a happiness score. The higher the score, the "happier citizens of that country are.</p>
             </div>
             <div>
                 <input key="slider" type='range' min='0' max='6' value={year} step='1' onChange={changeHandler}/>
@@ -426,8 +394,11 @@
             </div>
             <div style={{position: "relative", textAlign: "left", width: "240px",left:"40px", top:"40px"}}>
                 <svg width={WIDTH} height={HEIGHT}>
-                    <TheMap data={data} map={map} selectedCountry={selectedCountry} 
-                        setSelectedCountry={setSelectedCountry}/>
+                    <TheMap data={data} map={map} 
+                            selectedCountry={selectedCountry} 
+                            setSelectedCountry={setSelectedCountry}
+                            setTooltipX = {setTooltipX}
+                            setTooltipY = {setTooltipY}/>
 
                     <TimePlot x={margin.left+innerWidth/2} 
                                            y={margin.top} 
