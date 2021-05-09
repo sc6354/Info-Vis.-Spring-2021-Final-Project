@@ -1,8 +1,6 @@
 (function (d3) {
     'use strict';
   
-  
-  
     const dropdownMenu = (selection, props) => {
       const {
         options,
@@ -114,7 +112,7 @@
                     .domain(["South Asia", "Central and Eastern Europe", "Middle East and North Africa", 
                     "Sub-Saharan Africa", "Latin America and Caribbean","Commonwealth of Independent States",
                     "North America and ANZ", "Western Europe", "East Asia" ])
-                    .range(d3.schemeDark2)
+                    .range(d3.schemeDark2);
 
       // Add color legend
       var size = 20
@@ -126,20 +124,22 @@
         .enter()
         .append("circle")
           .attr("cx", 1200)
-          .attr("cy", function(d,i){ return 60 + i*(size+5)}) 
+          .attr("cy", function(d,i){ return 20 + i*(size+5)}) 
           .attr("r", 7)
           .style("fill", function(d){ return color(d)})
+          .style("stroke", 'black');
       
       svg.selectAll("mylabels")
       .data(allgroups)
       .enter()
       .append("text")
         .attr("x", 1200 + size*.8)
-        .attr("y", function(d,i){ return i * (size + 55) + (size/2)})
+        .attr("y", function(d,i){ return i * (size + 5) + (size/2)})
         .style("fill", function(d){ return color(d)})
         .text(function(d){ return d})
         .attr("text-anchor", "left")
-        .style("alignment-baseline", "middle")
+        .attr('transform', `translate(0,10)`)
+        .style("alignment-baseline", "middle");
     
       
       const circles = g.merge(gEnter)
@@ -150,18 +150,20 @@
           .attr('cy', innerHeight / 2)
           .attr('r', 0)
           .style("fill", function (d) { return color(d.region); } )
+          .style("stroke", 'black')
         .merge(circles)
-        .transition().duration(2000)
+        .transition().duration(1500)
         .delay((d, i) => i)
           .attr('cy', d => yScale(yValue(d)))
           .attr('cx', d => xScale(xValue(d)))
           .attr('r', circleRadius)
           .style("fill", function (d) { return color(d.region); } )
+          .style("stroke", 'black')
     };
   
     const svg = d3.select('svg');
   
-    const width = +svg.attr('width');
+    const width = +svg.attr('width')-300;
     const height = +svg.attr('height');
   
     let data;

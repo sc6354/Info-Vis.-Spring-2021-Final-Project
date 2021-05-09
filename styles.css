@@ -34,7 +34,7 @@ body {
 
 circle {
   fill: rgb(0, 102, 255);
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .tick text {
