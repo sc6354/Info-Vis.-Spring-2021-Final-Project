@@ -303,27 +303,6 @@
     }
 
 
-
-
-
-
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Chart 4: Top 20 Happiest Countries in Year ___ (Stacked Bar Chart)
-    function StackedBarChart(props) {}
-
-
-
-
-
-
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Chart 5: Select 2 Happiness Attributes (Scatter Chart)
-    function ScatterChart(props) {}
-
-
-
-
-
     function WorldHappy(props) {
         const [selectedCountry, setSelectedCountry] = React.useState('United States of America'); 
         const [year, setYear] = React.useState('6');
@@ -387,7 +366,7 @@
                 <p>Each country is surveyed on a number of factors and assigned a happiness score. The higher the score, the "happier citizens of that country are.
                 Use the year slider to select the year.</p>
             </div>
-            <div>
+            <div style={{position: "relative", left:"52px", top:"20px"}}>
                 <input key="slider" type='range' min='0' max='6' value={year} step='1' onChange={changeHandler}/>
                 <input key="monthText" type="text" value={YEAR[year]} readOnly/>
             </div>
