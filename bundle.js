@@ -108,7 +108,39 @@
         .merge(xAxisG.select('.axis-label'))
           .attr('x', innerWidth / 2)
           .text(xAxisLabel);
-  
+
+
+      var color = d3.scaleOrdinal()
+                    .domain(["South Asia", "Central and Eastern Europe", "Middle East and North Africa", 
+                    "Sub-Saharan Africa", "Latin America and Caribbean","Commonwealth of Independent States",
+                    "North America and ANZ", "Western Europe", "East Asia" ])
+                    .range(d3.schemeSet1)
+
+      // Add color legend
+      var size = 20
+      var allgroups = ["South Asia", "Central and Eastern Europe", "Middle East and North Africa", 
+      "Sub-Saharan Africa", "Latin America and Caribbean","Commonwealth of Independent States",
+      "North America and ANZ", "Western Europe", "East Asia"]
+      svg.selectAll("myrect")
+        .data(allgroups)
+        .enter()
+        .append("circle")
+          .attr("cx", 1200)
+          .attr("cy", function(d,i){ return 60 + i*(size+5)}) 
+          .attr("r", 7)
+          .style("fill", function(d){ return color(d)})
+      
+      svg.selectAll("mylabels")
+      .data(allgroups)
+      .enter()
+      .append("text")
+        .attr("x", 1200 + size*.8)
+        .attr("y", function(d,i){ return i * (size + 55) + (size/2)})
+        .style("fill", function(d){ return color(d)})
+        .text(function(d){ return d})
+        .attr("text-anchor", "left")
+        .style("alignment-baseline", "middle")
+    
       
       const circles = g.merge(gEnter)
         .selectAll('circle').data(data);
@@ -117,12 +149,14 @@
           .attr('cx', innerWidth / 2)
           .attr('cy', innerHeight / 2)
           .attr('r', 0)
+          .style("fill", function (d) { return color(d.region); } )
         .merge(circles)
         .transition().duration(2000)
         .delay((d, i) => i)
           .attr('cy', d => yScale(yValue(d)))
           .attr('cx', d => xScale(xValue(d)))
-          .attr('r', circleRadius);
+          .attr('r', circleRadius)
+          .style("fill", function (d) { return color(d.region); } )
     };
   
     const svg = d3.select('svg');
