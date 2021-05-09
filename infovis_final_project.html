@@ -38,20 +38,9 @@
         By utilizing these visualizations, one can reach a deeper understanding of the history of happiness for one country in particular,
          and compare it to other nations as well. On top of this, one can also delve into various attributes and their correlation 
          with happiness in various parts of the world. This visualization can greatly help someone such as a policymaker establish the 
-         direction for policies to help their country improve.
-        
+         direction for policies to help their country improve. 
     
     </p>
-
-<!--//////////////////////////////////////////////////////////////////////////////////////
-// Chart 5: Select 2 Happiness Attributes (Scatter Chart)-->
-    <div>
-        <button onclick="location.href='/scatter.html'" type="button">
-            SCATTER PLOT 1 </button>       
-        <button onclick="location.href='/scatter2.html'" type="button">
-            SCATTER PLOT 2 </button>
-
-    </div>
 
 
     <div id="root"></div>
@@ -394,8 +383,9 @@
         
         return <div>
             <div>
-            <h3>World Happiness Map</h3>
-                <p>Each country is surveyed on a number of factors and assigned a happiness score. The higher the score, the "happier citizens of that country are.</p>
+            <h1>World Happiness Map</h1>
+                <p>Each country is surveyed on a number of factors and assigned a happiness score. The higher the score, the "happier citizens of that country are.
+                Use the year slider to select the year.</p>
             </div>
             <div>
                 <input key="slider" type='range' min='0' max='6' value={year} step='1' onChange={changeHandler}/>
@@ -437,5 +427,20 @@
     }
     ReactDOM.render( <WorldHappy />, document.getElementById('root'));
     </script>
+    <!--//////////////////////////////////////////////////////////////////////////////////////
+// Chart 5 and 6: Select 2 Happiness Attributes (Scatter Chart)-->
+    <div>
+        <br></br>
+        <div>
+            <button onclick="location.href='/scatter.html'" type="button">
+            SCATTER PLOT 1 </button>    
+        </div>
+        <br>
+        <div>   
+            <button onclick="location.href='/scatter2.html'" type="button">
+            SCATTER PLOT 2 </button>
+        </div>
+    </div>
+
     </body>
     </html>
