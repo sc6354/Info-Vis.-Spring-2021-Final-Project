@@ -349,7 +349,7 @@
             };
 
         const WIDTH = 1350;
-        const HEIGHT = 1600;
+        const HEIGHT = 540;
         const margin = { top: 20, right: 40, bottom: 160, left: 40, gap:40 };
         const innerWidth = WIDTH - margin.left - margin.right - margin.gap;
         const innerHeight = HEIGHT - margin.top - margin.bottom - margin.gap;
@@ -379,13 +379,13 @@
 
         const yScaleTime = d3.scaleLinear()
             .domain([0, 8.5])
-            .range([innerHeight/8, 0])
+            .range([innerHeight/2, 0])
             .nice();
         
         // y axis for heatlhy life expectancy
         const yScaleLife= d3.scaleLinear()
             .domain([0, 90])
-            .range([innerHeight/8, 0])
+            .range([innerHeight/2, 0])
             .nice();
 
         const changeHandler = (event) => {
@@ -413,7 +413,7 @@
                                            y={margin.top} 
                                            data={countryData} 
                                            ave={aveScoreByYear}
-                                           height={innerHeight/8} 
+                                           height={innerHeight/2} 
                                            width={innerWidth/4}
                                            xScale = {xScaleTime}
                                            yScale = {yScaleTime}
@@ -423,7 +423,7 @@
                                            y={margin.top} 
                                            data={countryData} 
                                            ave={aveHealthByYear}
-                                           height={innerHeight/8} 
+                                           height={innerHeight/2} 
                                            width={innerWidth/4}
                                            xScale = {xScaleTime}
                                            yScale = {yScaleLife}
