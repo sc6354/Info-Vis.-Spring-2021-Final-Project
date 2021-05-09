@@ -184,16 +184,17 @@
       
       d3.select('#x-menu')
         .call(dropdownMenu, {
-          options: data.columns,
-          onOptionClicked: onXColumnClicked,
-          selectedOption: xColumn
+            options: data.columns.filter(function(key) { return key != "country" && key != "region" && key != "year"}),
+            onOptionClicked: onXColumnClicked,
+            selectedOption: xColumn
         });
       
       d3.select('#y-menu')
         .call(dropdownMenu, {
-          options: data.columns,
-          onOptionClicked: onYColumnClicked,
-          selectedOption: yColumn
+            options: data.columns.filter(function(key) { return key != "country" && key != "region" && key != "year"}),
+          //options: data.columns,
+            onOptionClicked: onYColumnClicked,
+            selectedOption: yColumn
         });
       
       svg.call(scatterPlot, {

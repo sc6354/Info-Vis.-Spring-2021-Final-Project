@@ -150,9 +150,10 @@
       
       d3.select('#x2-menu')
         .call(dropdownMenu, {
-          options: data.columns,
-          onOptionClicked: onXColumnClicked,
-          selectedOption: xColumn
+            options: data.columns.filter(function(key) { return key != "country" && key != "region" && key != "year"}),
+          //options: data.columns,
+            onOptionClicked: onXColumnClicked,
+            selectedOption: xColumn
         });
       
       svg.call(scatterPlot, {
