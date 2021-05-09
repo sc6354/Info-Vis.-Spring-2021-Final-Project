@@ -31,3 +31,35 @@ body {
 .text:hover .text-tooltip {
   display: block;
 }
+
+circle {
+  fill: rgb(0, 102, 255);
+  opacity: 0.3;
+}
+
+.tick text {
+  font-size: 2.7em;
+  fill: #635f5d;
+}
+
+.tick line {
+  stroke: #c0c0bb;
+}
+
+.axis-label {
+  font-size: 5em;
+  fill: #8e8883;
+}
+
+#menus {
+  font-size: 2.5em;
+  text-align: center;
+}
+
+#menus select {
+  font-size: 2.5rem;
+}
+
+#menus select option {
+  font-size: 1rem;
+}
