@@ -72,3 +72,17 @@ a.button {
   text-decoration: none;
   color: initial;
 }
+
+.tooltip {
+  position: absolute;
+  width: 200px;
+  height: 28px;
+  pointer-events: none;
+}
+h1 {
+  text-align: center;
+}
+
+h2 {
+  text-align: left;
+}

@@ -119,7 +119,7 @@
           .attr('r', 0)
         .merge(circles)
         .transition().duration(2000)
-        .delay((d, i) => i * 10)
+        .delay((d, i) => i)
           .attr('cy', d => yScale(yValue(d)))
           .attr('cx', d => xScale(xValue(d)))
           .attr('r', circleRadius);
@@ -192,7 +192,7 @@
           d.eb_perceptions_of_corruption = +d.eb_perceptions_of_corruption;
         });
         xColumn = data.columns[4];
-        yColumn = data.columns[0];
+        yColumn = data.columns[3];
         render();
       });
   
