@@ -114,7 +114,7 @@
                     .domain(["South Asia", "Central and Eastern Europe", "Middle East and North Africa", 
                     "Sub-Saharan Africa", "Latin America and Caribbean","Commonwealth of Independent States",
                     "North America and ANZ", "Western Europe", "East Asia" ])
-                    .range(d3.schemeSet1)
+                    .range(d3.schemeDark2)
 
       // Add color legend
       var size = 20

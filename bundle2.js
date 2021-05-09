@@ -1,8 +1,6 @@
 (function (d3) {
     'use strict';
   
-  
-  
     const dropdownMenu = (selection, props) => {
       const {
         options,
@@ -46,10 +44,10 @@
         .range([0, innerWidth])
         .nice();
       
-      const yScale = d3.scaleLinear();
-      yScale.domain(d3.extent(data, yValue));
-      yScale.range([innerHeight, 0]);
-      yScale.nice();
+      const yScale = d3.scaleBand()
+        .domain(["2015", "2016", "2017", "2018", "2019", "2020", "2021"])
+        .range([innerHeight, 0])
+        .padding(0.15);
       
       const g = selection.selectAll('.container').data([null]);
       const gEnter = g
@@ -109,22 +107,28 @@
         .merge(xAxisG.select('.axis-label'))
           .attr('x', innerWidth / 2)
           .text(xAxisLabel);
+
+      var x = d3.scaleBand()
+        .range([ 0, width ])
+        .domain(["2015", "2016", "2017", "2018", "2019", "2020", "2021"])
+        .padding(0.05)     // This is important: it is the space between 2 groups. 0 means no padding. 1 is the maximum.
+      svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisLeft(x))
   
-      
+      var jitterWidth = 40
       const circles = g.merge(gEnter)
         .selectAll('circle').data(data);
       circles
         .enter().append('circle')
+          .attr("transform", "translate(0, 50)")
           .attr('cx', innerWidth / 2)
-          .attr('cy', innerHeight / 2)
+          .attr('cy', (innerHeight / 2) + yScale.bandwidth()/2 - Math.random()*jitterWidth)
           .attr('r', 0)
-
-          
-
         .merge(circles)
         .transition().duration(2000)
         .delay((d, i) => i)
-          .attr('cy', d => yScale(yValue(d)))
+          .attr('cy', d => yScale(yValue(d)) + yScale.bandwidth()/2 - Math.random()*jitterWidth )
           .attr('cx', d => xScale(xValue(d)))
           .attr('r', circleRadius);
     };
@@ -156,8 +160,6 @@
           onOptionClicked: onXColumnClicked,
           selectedOption: xColumn
         });
-      
-
       
       svg.call(scatterPlot, {
         xValue: d => d[xColumn],
