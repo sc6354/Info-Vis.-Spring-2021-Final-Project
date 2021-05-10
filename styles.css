@@ -1,5 +1,6 @@
 body {
-  font-family: "Poppins", sans-serif;
+  font-family: "Gill Sans", sans-serif;
+  background-color: #edf6fc;
 }
 
 .land {
@@ -47,20 +48,24 @@ circle {
 }
 
 .axis-label {
+  font-family: "Gill Sans", sans-serif;
   font-size: 5em;
   fill: #8e8883;
 }
 
 #menus {
+  font-family: "Gill Sans", sans-serif;
   font-size: 2.5em;
   text-align: center;
 }
 
 #menus select {
+  font-family: "Gill Sans", sans-serif;
   font-size: 2.5rem;
 }
 
 #menus select option {
+  font-family: "Gill Sans", sans-serif;
   font-size: 1rem;
 }
 
@@ -84,5 +89,5 @@ h1 {
 }
 
 h2 {
-  text-align: left;
+  text-align: center;
 }
